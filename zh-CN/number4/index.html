@@ -114,10 +114,8 @@ i\begin{cases}
 &\vdots&&\vdots\\
 &a^{m^2}&:&m^2\ge x\ge m^2-m+1
 \end{cases}</script><p>类比为巨人的一大步 ( $\texttt{Giant Step}$ )。</p>
-<blockquote>
-<p>为什么要求 $a$ 与 $p$ 互质?</p>
+<p>为什么要求 $a$ 与 $p$ 互质?<br>扩展欧拉定理的成立需要满足 $a$ 与 $p$ 互质。</p>
 <ol>
-<li>扩展欧拉定理的成立需要满足 $a$ 与 $p$ 互质。</li>
 <li><p>由 $(a^m)^i\equiv ba^j(\bmod\,p)$ 推回 $a^{im-j}\equiv b(\bmod\,p)$ 需要同余式两边同时乘上 $a^j$，所以必须有 $a^j$ 与 $p$ 互质，同时 $a$ 与 $p$ 互质。</p>
 <p> 在同余式两侧同时乘上 $a^j$ 就要保证 $a^j$ 为 $(a^m)^i$ 和 $ba^j$ 在模 $p$ 的意义下的乘法逆元，即需要保证 $a^j$ 与 $p$ 互质。</p>
 <p> 例如</p>
@@ -126,7 +124,6 @@ i\begin{cases}
 <p> 同时这也是乘法逆元的作用的体现。</p>
 </li>
 </ol>
-</blockquote>
 <p>代码如下 :<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">std::unordered_map&lt;<span class="type">int</span>,<span class="type">int</span>&gt; t;</span><br><span class="line"><span class="function">ll <span class="title">pow</span><span class="params">(ll a,ll x,ll p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">ll <span class="title">ans</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="keyword">while</span>(x)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(x&amp;<span class="number">1</span>) ans=ans*a%p;</span><br><span class="line">		a=a*a%p;</span><br><span class="line">		x&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">bsgs</span><span class="params">(ll a,ll b,ll p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	a%=p;</span><br><span class="line">	b%=p;</span><br><span class="line">	<span class="keyword">if</span>(b==<span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	t[b]=<span class="number">0</span>;</span><br><span class="line">	ll m=<span class="built_in">ceil</span>(<span class="built_in">sqrt</span>(p)),c=b,am=<span class="built_in">pow</span>(a,m,p);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;m;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		c=c*a%p;</span><br><span class="line">		t[c]=i;</span><br><span class="line">	&#125;</span><br><span class="line">	c=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=m;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		c=c*am%p;</span><br><span class="line">		<span class="keyword">if</span>(t.<span class="built_in">count</span>(c)) <span class="keyword">return</span> i*m-t[c];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <hr>
 <h2 id="扩展-BSGS-算法-texttt-Extended-Baby-Step-Giant-Step"><a href="#扩展-BSGS-算法-texttt-Extended-Baby-Step-Giant-Step" class="headerlink" title="扩展 BSGS 算法 ( $\texttt{Extended Baby Step Giant Step}$ )"></a>扩展 BSGS 算法 ( $\texttt{Extended Baby Step Giant Step}$ )</h2><h3 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h3><p>对于 BSGS 算法，必须要满足的条件是 $a$ 与 $p$ 互质，否则扩展欧拉定理和乘法逆元就不再成立。而扩展 BSGS 算法就可以不需要这个条件。</p>
@@ -321,7 +318,7 @@ a_{n,1}&a_{n,2}&a_{n,3}&\cdots&a_{n,n}&b_n\\
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://decemberfox.github.io/zh-CN/number4/" data-id="clsn1zwsk000b14fe9kid6s2j" data-title="数论 ( 四 )" class="article-share-link">分享</a>
+      <a data-url="http://decemberfox.github.io/zh-CN/number4/" data-id="clsn40ewt000b8cfe7vdp8z6i" data-title="数论 ( 四 )" class="article-share-link">分享</a>
       
       
       
