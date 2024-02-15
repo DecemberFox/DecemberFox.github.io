@@ -1,0 +1,3 @@
+# DecemberFox's Blog
+
+Welcome!
