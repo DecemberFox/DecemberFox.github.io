@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>数论 ( 四 ) | DecemberFox&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">DecemberFox&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">The Most Vegetable.</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-number4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/zh-CN/number4/" class="article-date">
+  <time class="dt-published" datetime="2024-01-31T16:00:00.000Z" itemprop="datePublished">2024-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      数论 ( 四 )
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="本章概况"><a href="#本章概况" class="headerlink" title="本章概况"></a>本章概况</h2><p>本章将会详细介绍 BSGS 算法、扩展 BSGS 算法、线性方程组、高斯消元法、高斯-约旦消元法和矩阵求逆。</p>
+<span id="more"></span>
+<hr>
+<h2 id="BSGS-算法-texttt-Baby-Step-Giant-Step"><a href="#BSGS-算法-texttt-Baby-Step-Giant-Step" class="headerlink" title="BSGS 算法 ( $\texttt{Baby Step Giant Step}$ )"></a>BSGS 算法 ( $\texttt{Baby Step Giant Step}$ )</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>这里由题目 <a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P3846">P3846 [TJOI2007] 可爱的质数/【模板】BSGS</a> 引入算法。</p>
+<p>给定一个质数 $p$，以及一个整数 $b$，一个整数 $n$，现在要求你计算一个最小的非负整数 $l$，满足 $b^l\equiv n(\bmod\,p)$。</p>
+<p>BSGS 算法用于求解高次同余方程，即给定整数 $a,b,p$，其中 $a$ 与 $p$ 互质，求满足 $a^x\equiv b(\bmod\,p)$ 的最小非负整数解 $x$。</p>
+<p>由扩展欧拉定理知，$a^x\equiv a^{x\bmod\varphi(p)+\varphi(p)}(\bmod\,p)$，由于 $a$ 与 $p$ 互质，因此 $a^x\equiv a^{x\bmod\varphi(p)}(\bmod\,p)$。</p>
+<p>于是，式子 $a^x\equiv b(\bmod\,p)$ 就可以变为 $a^{x\bmod\varphi(p)}\equiv b(\bmod\,p)$，由于 $\varphi(p)&lt;p$，因此就可以遍历 $x\in[0,p]$ 就能够找到最小的正整数 $x$。</p>
+<p>此时使用暴力枚举 $x$ 的方法的时间复杂度为 $O(p)$，因此考虑优化算法。</p>
+<p>设 $x=im-j$，其中 $m=\Big\lceil\sqrt{p}\Big\rceil,i\in[1,m],j\in[0,m-1]$，即 :</p>
+<ul>
+<li>当 $i=1$ 时，$j=m-1$，则 $x=im-j=1\times m-(m-1)=1$。</li>
+<li>当 $i=m$ 时，$j=0$，则 $x=im-j=m\times m-0=p$。</li>
+</ul>
+<p>此时对于 $x=0$ 的情况进行特判即可。</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+a^{im-j}&\equiv b(\bmod\,p)\\
+a^{im}\div a^j&\equiv b(\bmod\,p)\\
+(a^{m})^i&\equiv ba^j(\bmod\,p)\\
+\end{aligned}</script><ol>
+<li><p>先枚举 $j$，将 $(ba^j,j)$ 放入哈希表中，如果键值 $ba^j$ 重复了，则使用更大的 $j$ 代替旧的，因为在在式子 $x=im-j$ 中，更大的 $j$ 可以使 $x$ 的值更小。</p>
+</li>
+<li><p>接着枚举 $i$，计算 $(a^m)^i$，并在哈希表中查找对应的键值，找到第一个即可结束，因为此时的 $(a^m)^i$ 最小，可以使 $x$ 的值更小。</p>
+</li>
+</ol>
+<p>枚举 $j,i$ 的次数都是 $\sqrt{p}$ 次的,因此时间复杂度为 $O(\sqrt{p})$。</p>
+<p>算法的本质是分块思想 :</p>
+<p>将 $x\in[1,p]$ 分成 $\sqrt{p}$ 块，每块长度都为 $\sqrt{p}$。</p>
+<p>在枚举 $j$ 时，</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+j:\hspace{2cm}&0&,&1&,&2&,&\cdots&,&m-1\\
+&b&,&ba&,&ba^2&,&\cdots&,&ba^{m-1}\\ 
+\end{aligned}</script><p>类比为婴儿的一小步 ( $\texttt{Baby Step}$ )。</p>
+<p>而在枚举 $i$ 时，</p>
+<script type="math/tex; mode=display">
+i\begin{cases}
+&a^m&:&m\ge x\ge1\\
+&a^{2m}&:&2m\ge x\ge m+1\\
+&\vdots&&\vdots\\
+&a^{m^2}&:&m^2\ge x\ge m^2-m+1
+\end{cases}</script><p>类比为巨人的一大步 ( $\texttt{Giant Step}$ )。</p>
+<blockquote>
+<p>为什么要求 $a$ 与 $p$ 互质?</p>
+<ol>
+<li>扩展欧拉定理的成立需要满足 $a$ 与 $p$ 互质。</li>
+<li><p>由 $(a^m)^i\equiv ba^j(\bmod\,p)$ 推回 $a^{im-j}\equiv b(\bmod\,p)$ 需要同余式两边同时乘上 $a^j$，所以必须有 $a^j$ 与 $p$ 互质，同时 $a$ 与 $p$ 互质。</p>
+<p> 在同余式两侧同时乘上 $a^j$ 就要保证 $a^j$ 为 $(a^m)^i$ 和 $ba^j$ 在模 $p$ 的意义下的乘法逆元，即需要保证 $a^j$ 与 $p$ 互质。</p>
+<p> 例如</p>
+<p> $15\equiv3(\bmod\,4)\implies5\equiv1(\bmod\,4)$</p>
+<p> $15\equiv3(\bmod\,6)\implies5\not\equiv1(\bmod\,4)$</p>
+<p> 同时这也是乘法逆元的作用的体现。</p>
+</li>
+</ol>
+</blockquote>
+<p>代码如下 :<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">std::unordered_map&lt;<span class="type">int</span>,<span class="type">int</span>&gt; t;</span><br><span class="line"><span class="function">ll <span class="title">pow</span><span class="params">(ll a,ll x,ll p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">ll <span class="title">ans</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="keyword">while</span>(x)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(x&amp;<span class="number">1</span>) ans=ans*a%p;</span><br><span class="line">		a=a*a%p;</span><br><span class="line">		x&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">bsgs</span><span class="params">(ll a,ll b,ll p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	a%=p;</span><br><span class="line">	b%=p;</span><br><span class="line">	<span class="keyword">if</span>(b==<span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	t[b]=<span class="number">0</span>;</span><br><span class="line">	ll m=<span class="built_in">ceil</span>(<span class="built_in">sqrt</span>(p)),c=b,am=<span class="built_in">pow</span>(a,m,p);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;m;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		c=c*a%p;</span><br><span class="line">		t[c]=i;</span><br><span class="line">	&#125;</span><br><span class="line">	c=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=m;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		c=c*am%p;</span><br><span class="line">		<span class="keyword">if</span>(t.<span class="built_in">count</span>(c)) <span class="keyword">return</span> i*m-t[c];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="扩展-BSGS-算法-texttt-Extended-Baby-Step-Giant-Step"><a href="#扩展-BSGS-算法-texttt-Extended-Baby-Step-Giant-Step" class="headerlink" title="扩展 BSGS 算法 ( $\texttt{Extended Baby Step Giant Step}$ )"></a>扩展 BSGS 算法 ( $\texttt{Extended Baby Step Giant Step}$ )</h2><h3 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h3><p>对于 BSGS 算法，必须要满足的条件是 $a$ 与 $p$ 互质，否则扩展欧拉定理和乘法逆元就不再成立。而扩展 BSGS 算法就可以不需要这个条件。</p>
+<p>因此进行分类讨论，对于同余方程 $a^x\equiv b(\bmod\,p)$ :</p>
+<ul>
+<li>当 $a$ 与 $p$ 互质时，可以直接使用 BSGS 算法求解。</li>
+<li>当 $a$ 与 $p$ 不互质时，可以考虑使两者互质。</li>
+</ul>
+<p>对于原同余方程</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+a^x&\equiv b(\bmod\,p)\\
+a\cdot a^{x-1}&=b-py\\
+a\cdot a^{x-1}+py&=b\\
+\end{aligned}</script><p>此时原方程变为了线性不定方程，可以考虑使用求解<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/blog/298529/number3">线性不定方程</a>的办法解决。</p>
+<p>因此对于 $d_1=\gcd(a,p)$ : </p>
+<ul>
+<li>如果 $d_1\nmid b$，则原不定方程无整数解。</li>
+<li><p>否则，可以使不定方程两边同时除以 $d_1$ :</p>
+<script type="math/tex; mode=display">\begin{aligned}a\cdot a^{x-1}+py&=b\\\frac{a}{d_1}\cdot a^{x-1}+\frac{p}{d_1}y&=\frac{b}{d_1}\end{aligned}</script><p>   且可以将该线性不定方程转化回同余方程 :</p>
+<script type="math/tex; mode=display">\begin{aligned}\frac{a}{d_1}\cdot a^{x-1}+\frac{p}{d_1}y&=\frac{b}{d_1}\\\frac{a}{d_1}\cdot a^{x-1}&=\frac{b}{d_1}-\frac{p}{d_1}y\\\frac{a}{d_1}a^{x-1}&\equiv\frac{b}{d_1}(\bmod\,\frac{p}{d_1})\end{aligned}</script></li>
+<li><p>此时若 $a$ 与 $\frac{p}{d_1}$ 仍不互质就继续进行上述操作，判断 $d_2=\gcd(a,\frac{p}{d_1})$，直到最终 $a$ 与 $\frac{p}{d_1\cdots d_k}$ 互质。此时令 $D=\prod^k_{i=1}d_i$，则原方程变为 :</p>
+<script type="math/tex; mode=display">\frac{a^k}{D}a^{x-k}\equiv\frac{b}{D}(\bmod\,\frac{p}{D})</script><p>  此时 $a$ 与 $\frac{p}{D}$ 互质，因此 $\frac{a^k}{D}$ 与 $\frac{p}{D}$ 互质，此时 $\frac{a^k}{D}$ 存在乘法逆元，最后按照 BSGS 的方式求解即可，需要注意的是，最后求解出来的是 $x-k$，因此返回答案时需要加上 $k$。</p>
+</li>
+</ul>
+<p>因此代码如下 :<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">std::map&lt;<span class="type">int</span>,<span class="type">int</span>&gt; t;</span><br><span class="line"><span class="function">ll <span class="title">gcd</span><span class="params">(ll a,ll b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> b?<span class="built_in">gcd</span>(b,a%b):a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">pow</span><span class="params">(ll a,ll x,ll p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">ll <span class="title">ans</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="keyword">while</span>(x)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(x&amp;<span class="number">1</span>) ans=ans*a%p;</span><br><span class="line">		a=a*a%p;</span><br><span class="line">		x&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">exbsgs</span><span class="params">(ll a,ll b,ll p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	a%=p;</span><br><span class="line">	b%=p;</span><br><span class="line">	<span class="keyword">if</span>(b==<span class="number">1</span>||p==<span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	ll d,<span class="built_in">k</span>(<span class="number">0</span>),<span class="built_in">ak</span>(<span class="number">1</span>),m=<span class="built_in">ceil</span>(<span class="built_in">sqrt</span>(p));</span><br><span class="line">	<span class="keyword">while</span>(<span class="literal">true</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		d=<span class="built_in">gcd</span>(a,p);</span><br><span class="line">		<span class="keyword">if</span>(d==<span class="number">1</span>) <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">if</span>(b%d) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">		++k;</span><br><span class="line">		b/=d;</span><br><span class="line">		p/=d;</span><br><span class="line">		ak=a/d*ak%p;</span><br><span class="line">		<span class="keyword">if</span>(ak==b) <span class="keyword">return</span> k;</span><br><span class="line">	&#125;</span><br><span class="line">	ll c=b,am=<span class="built_in">pow</span>(a,m,p);</span><br><span class="line">	t[b]=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;m;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		c=c*a%p;</span><br><span class="line">		t[c]=i;</span><br><span class="line">	&#125;</span><br><span class="line">	c=ak;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=m;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		c=c*am%p;</span><br><span class="line">		<span class="keyword">if</span>(t.<span class="built_in">count</span>(c)) <span class="keyword">return</span> i*m-t[c]+k;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="线性方程组-texttt-Linear-System-of-Equations"><a href="#线性方程组-texttt-Linear-System-of-Equations" class="headerlink" title="线性方程组 ( $\texttt{Linear System of Equations}$ )"></a>线性方程组 ( $\texttt{Linear System of Equations}$ )</h2><h3 id="基本概念-2"><a href="#基本概念-2" class="headerlink" title="基本概念"></a>基本概念</h3><p>对于方程组</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+a_{1,1}x_1+a_{1,2}x_2+a_{1,3}x_3+\cdots+a_{1,n}x_n&=b_1\\
+a_{2,1}x_1+a_{2,2}x_2+a_{2,3}x_3+\cdots+a_{2,n}x_n&=b_2\\
+&\vdots\\
+a_{n,1}x_1+a_{n,2}x_2+a_{n,3}x_3+\cdots+a_{n,n}x_n&=b_n
+\end{cases}</script><p>可以转换为 :</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+a_{1,1}&a_{1,2}&a_{1,3}&\cdots&a_{1,n}\\
+a_{2,1}&a_{2,2}&a_{2,3}&\cdots&a_{2,n}\\
+\vdots&\vdots&\vdots&&\vdots\\
+a_{n,1}&a_{n,2}&a_{n,3}&\cdots&a_{n,n}\\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+x_1\\
+x_2\\
+\vdots\\
+x_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+b_1\\
+b_2\\
+\vdots\\
+b_n
+\end{bmatrix}</script><p>其意义是等价的。</p>
+<p>则有增广矩阵 :</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+a_{1,1}&a_{1,2}&a_{1,3}&\cdots&a_{1,n}&b_1\\
+a_{2,1}&a_{2,2}&a_{2,3}&\cdots&a_{2,n}&b_2\\
+\vdots&\vdots&\vdots&&\vdots&\vdots\\
+a_{n,1}&a_{n,2}&a_{n,3}&\cdots&a_{n,n}&b_n\\
+\end{bmatrix}</script><p>则有矩阵的<strong>初等行变换</strong> :</p>
+<ol>
+<li>换 : 交<strong>换</strong>两行。</li>
+<li>乘 : 把某一行<strong>乘</strong>以另一个非 $0$ 的数。</li>
+<li>加 : 把某一行的若干倍<strong>加</strong>到另一行上。</li>
+</ol>
+<hr>
+<h2 id="高斯消元法-texttt-Gaussian-Elimination"><a href="#高斯消元法-texttt-Gaussian-Elimination" class="headerlink" title="高斯消元法 ( $\texttt{Gaussian Elimination}$ )"></a>高斯消元法 ( $\texttt{Gaussian Elimination}$ )</h2><p>高斯消元法可以求解线性方程组。</p>
+<p>对于系数矩阵 $A$，</p>
+<ol>
+<li>首先枚举主元 $x_i$，对于一个主元 $x_i$，找到一行主元系数不为 $0$ 的行。</li>
+<li>使用初等行变换 $1$，将改行与第一行交换。</li>
+<li>使用初等行变换 $2$，将主元系数变为 $1$。</li>
+<li>使用初等行变换 $3$，将其他行的主元系数变为 $0$。</li>
+<li>反复执行前 $4$ 步操作，直到枚举完成所有主元。</li>
+</ol>
+<p>最终就可以得到一个<strong>上三角矩阵</strong>，可以看到左上角就类似于一个三角形，再从下到上回带求解。</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+1&a'_{1,2}&a'_{1,3}&a'_{1,4}&\cdots&a'_{1,n}&b'_1\\
+\color{lightgrey}0&1&a'_{2,3}&a'_{2,4}&\cdots&a'_{2,n}&b'_2\\
+\color{lightgrey}0&\color{lightgrey}0&1&a'_{3,4}&\cdots&a'_{3,n}&b'_3\\
+&\color{lightgrey}\vdots&&\vdots&&\vdots&\vdots\\
+\color{lightgrey}0&\color{lightgrey}0&\color{lightgrey}0&\color{lightgrey}0&1&a'_{n-1,n}&b'_{n-1}\\
+\color{lightgrey}0&\color{lightgrey}0&\color{lightgrey}0&\color{lightgrey}0&\color{lightgrey}0&1&b'_n
+\end{bmatrix}</script><p>例如上面的矩阵中，可以很轻易的从第 $n$ 行得出 $x_n=b’_n$，再带入第 $n-1$ 行得出 $x_{n-1}=b’_{n-1}-a’_{n-1,n}\times x_n$。</p>
+<p>例如下面的矩阵，枚举的主元为 $x_1$。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}0&2&1&7\\2&1&1&7\\2&2&1&9\end{bmatrix}</script><p>按照高斯消元法就可以交换第 $1$ 行和第 $2$ 行。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}2&1&1&7\\0&2&1&7\\2&2&1&9\end{bmatrix}</script><p>随后使用变换 $2$，将主元的系数改为 $1$，即全部系数乘以 $0.5$。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}1&0.5&0.5&3.5\\0&2&1&7\\2&2&1&9\end{bmatrix}</script><p>接着将其余行的主元系数改为 $0$，即将第 $3$ 行减去第 $1$ 行的 $2$ 倍。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}1&0.5&0.5&3.5\\\color{lightgrey}0&2&1&7\\\color{lightgrey}0&1&0&2\end{bmatrix}</script><p>然后枚举主元为 $x_2$，并将第二行的主元系数改为 $1$。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}1&0.5&0.5&3.5\\\color{lightgrey}0&1&0.5&3.5\\\color{lightgrey}0&1&0&2\end{bmatrix}</script><p>同样需要将其余行的主元系数改为 $0$。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}1&0.5&0.5&3.5\\\color{lightgrey}0&1&0.5&3.5\\\color{lightgrey}0&\color{lightgrey}0&-0.5&-1.5\end{bmatrix}</script><p>走后还需要将主元枚举为 $x_3$，并将最后一行的主元系数改为 $1$。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}1&0.5&0.5&3.5\\\color{lightgrey}0&1&0.5&3.5\\\color{lightgrey}0&\color{lightgrey}0&1&3\end{bmatrix}</script><p>此时不难看出 $x_3=3$，并回带至上一行，使 $b’_2$ 减去 $a’_{2,3}\times x_3$ 变为 $2$。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}1&0.5&0.5&3.5\\\color{lightgrey}0&1&\color{lightgrey}0&2\\\color{lightgrey}0&\color{lightgrey}0&1&3\end{bmatrix}</script><p>这样也不难看出此时 $x_2=2$，并且可以接着回带至上一行，使 $b’_1$ 减去 $a’_{1,2}\times x_2+a’_{1,3}\times x_3$ 变为 $1$。</p>
+<script type="math/tex; mode=display">\begin{bmatrix}1&\color{lightgrey}0&\color{lightgrey}0&1\\\color{lightgrey}0&1&\color{lightgrey}0&2\\\color{lightgrey}0&\color{lightgrey}0&1&3\end{bmatrix}</script><p>最后求解出 $x_1=1$，整一个求解完成。</p>
+<hr>
+<p>此时方程组不一定有唯一解，还可能存在无解或无穷多解的情况。</p>
+<ol>
+<li>唯一解，最终枚举完所有主元 $x_i$。</li>
+<li>无解，存在一行 $k$ 的主元系数 $a’_{k,k}$ 只能为 $0$ 且 $b’_k\neq0$，此时不论 $x_k$ 是任何实数，都无法满足该行的线性方程。</li>
+<li>无穷多解，存在一行 $k$ 的主元素 $a’_{k,k}$ 只能为 $0$ 且 $b’_k=0$，此时不论 $x_k$ 是任何实数，都可以满足该行的线性方程。</li>
+</ol>
+<p>代码如下 :<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> const1=<span class="number">110</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">double</span> eps=<span class="number">1e-6</span>;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line"><span class="type">double</span> a[const1][const1];</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">Gaussian</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i,j,k;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;=n;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(<span class="built_in">fabs</span>(a[j][i])&gt;eps)</span><br><span class="line">			&#123;</span><br><span class="line">				std::<span class="built_in">swap</span>(a[i],a[j]);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">fabs</span>(a[i][i])&lt;eps) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		<span class="keyword">for</span>(j=n+<span class="number">1</span>;j&gt;=i;--j) a[i][j]/=a[i][i];</span><br><span class="line">		<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;=n;++j) <span class="keyword">for</span>(k=n+<span class="number">1</span>;k&gt;=i;--k) a[j][k]-=a[j][i]*a[i][k];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(i=n<span class="number">-1</span>;i&gt;=<span class="number">1</span>;--i) <span class="keyword">for</span>(j=n;j&gt;i;--j) a[i][n+<span class="number">1</span>]-=a[i][j]*a[j][n+<span class="number">1</span>];</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>函数 <code>Gaussian</code> 返回若为 <code>true</code> 则表示有唯一解，且解存储于 $a_{1,n+1}$ 至 $a_{n,n+1}$；若返回 <code>false</code> 则表示没有唯一解。</p>
+<blockquote>
+<p>PS : <a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P3389">此题</a>是我在洛谷做的第 $1.0\operatorname{k}$ 道题 !</p>
+</blockquote>
+<hr>
+<h2 id="高斯-约旦消元法-texttt-Gauss-Jordan-Elimination"><a href="#高斯-约旦消元法-texttt-Gauss-Jordan-Elimination" class="headerlink" title="高斯-约旦消元法 ( $\texttt{Gauss-Jordan Elimination}$ )"></a>高斯-约旦消元法 ( $\texttt{Gauss-Jordan Elimination}$ )</h2><p>高斯-约旦消元法相比较于高斯消元法更加简单，高斯-约旦消元法会先将矩阵消元成为主对角矩阵，再使用等式右侧的数除以主元系数。</p>
+<p>与高斯消元法中不同的地方仅为最后两步，在每轮循环中，主元所在的行不变，主元所在的列消为 $0$。</p>
+<p>例如下面的系数矩阵</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+1&2&1&8\\
+2&2&1&9\\
+2&1&1&7
+\end{bmatrix}</script><p>高斯-约旦消元法先将第一列的第二三行的数消为 $0$，即</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+1&2&1&8\\
+\color{lightgrey}0&-2&-1&-7\\
+\color{lightgrey}0&-3&-1&-9
+\end{bmatrix}</script><p>随后消去第二列的第一三行</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+1&\color{lightgrey}0&0&1\\
+\color{lightgrey}0&-2&-1&-7\\
+\color{lightgrey}0&\color{lightgrey}0&0.5&1.5
+\end{bmatrix}</script><p>最后消去第三列的第一二行</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+1&\color{lightgrey}0&\color{lightgrey}0&1\\
+\color{lightgrey}0&-2&\color{lightgrey}0&-4\\
+\color{lightgrey}0&\color{lightgrey}0&0.5&1.5
+\end{bmatrix}</script><p>最后依次除以主元即可，解得 $x_1=1\div1=1,x_2=-4\div(-2)=2,x_3=1.5\div0.5=3$。</p>
+<p>此处判断了解的情况，当有唯一解时返回 $1$；当无解时返回 $-1$；当有无穷个解时返回 $0$。</p>
+<p>代码如下<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> const1=<span class="number">110</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">double</span> eps=<span class="number">1e-6</span>;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line"><span class="type">double</span> a[const1][const1],p;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">GaussianJordan</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> c,i,j,k,r;</span><br><span class="line">	<span class="keyword">for</span>(c=<span class="number">1</span>,i=<span class="number">1</span>;c&lt;=n;++c)</span><br><span class="line">	&#123;</span><br><span class="line">		r=i;</span><br><span class="line">		<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;=n;++j) <span class="keyword">if</span>(<span class="built_in">fabs</span>(a[j][c])&gt;<span class="built_in">fabs</span>(a[r][c])) r=j;</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">fabs</span>(a[r][c])&lt;eps) <span class="keyword">continue</span>;</span><br><span class="line">		std::<span class="built_in">swap</span>(a[i],a[r]);</span><br><span class="line">		<span class="keyword">for</span>(j=<span class="number">1</span>;j&lt;=n;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(i==j) <span class="keyword">continue</span>;</span><br><span class="line">			p=a[j][c]/a[i][c];</span><br><span class="line">			<span class="keyword">for</span>(k=c+<span class="number">1</span>;k&lt;=n+<span class="number">1</span>;++k) a[j][k]-=p*a[i][k];</span><br><span class="line">		&#125;</span><br><span class="line">		++i;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(i&lt;=n)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">while</span>(i&lt;=n) <span class="keyword">if</span>(<span class="built_in">fabs</span>(a[i++][n+<span class="number">1</span>])&gt;eps) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;++i) a[i][n+<span class="number">1</span>]/=a[i][i];</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="矩阵求逆"><a href="#矩阵求逆" class="headerlink" title="矩阵求逆"></a>矩阵求逆</h2><h3 id="基本概念-3"><a href="#基本概念-3" class="headerlink" title="基本概念"></a>基本概念</h3><p>对于矩阵 $A$，若存在矩阵 $B$，使得 $A\times B=B\times A=I$，则称矩阵 $B$ 为矩阵 $A$ 的<strong>逆矩阵</strong>，记作 $A^{-1}$ ( $I$ 为单位矩阵 )。</p>
+<p>给出一个 $n\times n$ 的矩阵 $A$，求解其逆矩阵 $A^{-1}$ 的方法。</p>
+<ol>
+<li>构造一个 $n\times 2n$ 的矩阵 $(A,I)$，将矩阵 $A$ 与矩阵 $I$ 拼接起来。</li>
+<li>用高斯-约旦消元法将其简化为 $(I,A^{-1})$，即可得到 $A$ 的逆矩阵 $A^{-1}$。</li>
+</ol>
+<p>证明 :</p>
+<p>可以看做 $n$ 组 $n$ 元线性方程组的矩阵形式，设下面的方程为 $A\times X=I$</p>
+<script type="math/tex; mode=display">\begin{aligned}A\times X&=I\\\begin{bmatrix}a_{1,1}&\cdots&a_{1,n}\\\vdots&\ddots&\vdots\\a_{n,1}&\cdots&a_{n,n}\end{bmatrix}\times\begin{bmatrix}x_{1,1}&\cdots&x_{1,n}\\\vdots&\ddots&\vdots\\x_{n,1}&\cdots&x_{n,n}\end{bmatrix}&=\begin{bmatrix}1&\cdots&0&\cdots&0\\0&\cdots&1&\cdots&0\\0&\cdots&0&\cdots&1\end{bmatrix}\\\Bigg(\begin{bmatrix}a_{1,1}&\cdots&a_{1,n}\\\vdots&\ddots&\vdots\\a_{n,1}&\cdots&a_{n,n}\end{bmatrix}\times\begin{bmatrix}x_{1,1}\\\vdots\\x_{n,1}\end{bmatrix},\cdots,\begin{bmatrix}a_{1,1}&\cdots&a_{1,n}\\\vdots&\ddots&\vdots\\a_{n,1}&\cdots&a_{n,n}\end{bmatrix}\times\begin{bmatrix}x_{1,n}\\\vdots\\x_{n,n}\end{bmatrix}\Bigg)&=\begin{bmatrix}1&\cdots&0&\cdots&0\\0&\cdots&1&\cdots&0\\0&\cdots&0&\cdots&1\end{bmatrix}\\\Bigg(\begin{bmatrix}1\\\vdots\\0\end{bmatrix},\cdots,\begin{bmatrix}0\\\vdots\\1\end{bmatrix}\Bigg)&=\begin{bmatrix}1&\cdots&0&\cdots&0\\0&\cdots&1&\cdots&0\\0&\cdots&0&\cdots&1\end{bmatrix}\end{aligned}</script><p>此时每一个被分开的矩阵 $X$ 的列都是矩阵 $I$ 中的一列，都有其各自的矩阵，最后依次拼接即可。</p>
+<p>因此可以得到</p>
+<script type="math/tex; mode=display">\begin{aligned}A\times X&=I\\A^{-1}(A\times X)&=A^{-1}I\\IX&=A^{-1}
+\end{aligned}</script><p>矩阵 $A$ 变为了单位矩阵 $I$，由于两侧是相等的，因此单位矩阵 $I$ 就变为了矩阵 $A$ 的逆矩阵 $A^{-1}$。</p>
+<p>当左部出现了全 $0$ 行时，说明此时不可能构造出单位矩阵，则矩阵 $A$ 是不可逆的。</p>
+<p>例如求解下面的矩阵的逆</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+2&1&1\\
+1&0&1\\
+2&2&2
+\end{bmatrix}</script><p>先在该矩阵的右侧连接上一个单位矩阵</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+2&1&1&1&\color{lightgrey}0&\color{lightgrey}0\\
+1&0&1&\color{lightgrey}0&1&\color{lightgrey}0\\
+2&2&2&\color{lightgrey}0&\color{lightgrey}0&1
+\end{bmatrix}</script><p>随后按照高斯-约旦消元法进行消元，可以得到下面的矩阵</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+2&\color{lightgrey}0&\color{lightgrey}0&2&0&-1\\
+\color{lightgrey}0&-0.5&\color{lightgrey}0&0&0.5&-0.25\\
+\color{lightgrey}0&\color{lightgrey}0&2&-2&2&1
+\end{bmatrix}</script><p>最后将原矩阵变为单位矩阵，即完成高斯-约旦消元法最后的步骤</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+1&\color{lightgrey}0&\color{lightgrey}0&1&0&-0.5\\
+\color{lightgrey}0&1&\color{lightgrey}0&0&-1&0.5\\
+\color{lightgrey}0&\color{lightgrey}0&1&-1&1&0.5
+\end{bmatrix}</script><p>此时可以看到左侧的半个矩阵变为了单位矩阵，而右侧的半个矩阵变为了原矩阵的逆矩阵。</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}2&1&1\\1&0&1\\2&2&2\end{bmatrix}
+\times
+\begin{bmatrix}1&0&-0.5\\0&-1&0.5\\-1&1&0.5\end{bmatrix}=
+\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix}</script><h3 id="求模意义下的逆矩阵"><a href="#求模意义下的逆矩阵" class="headerlink" title="求模意义下的逆矩阵"></a>求模意义下的逆矩阵</h3><ol>
+<li>题目中模一半为大质数，且元素均小于模数，因此可以使用费马小定理更方便地求解逆元。</li>
+<li>除法变为乘法逆元可以避免出现小数情况导致精度丢失。</li>
+<li>使用“馍加馍”可以避免出现负数。</li>
+</ol>
+<p>此处判断了解的情况，当有解时返回 $1$，且答案存于数组 $a$ 的右半部分；当无解时返回 $-1$。</p>
+<p>代码如下<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> const1=<span class="number">4e2</span>+<span class="number">10</span>;</span><br><span class="line"><span class="type">const</span> ll mod=<span class="number">1e9</span>+<span class="number">7</span>;</span><br><span class="line">ll a[const1][const1&lt;&lt;<span class="number">1</span>];</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line"><span class="function">ll <span class="title">pow</span><span class="params">(ll a,ll x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">ll <span class="title">ans</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="keyword">while</span>(x)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(x&amp;<span class="number">1</span>) ans=ans*a%mod;</span><br><span class="line">		a=a*a%mod;</span><br><span class="line">		x&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">GaussianJordan</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i,j,k,r;</span><br><span class="line">	ll t,p;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		r=i;</span><br><span class="line">		<span class="keyword">for</span>(j=i;j&lt;=n;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(a[j][i])</span><br><span class="line">			&#123;</span><br><span class="line">				r=j;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(r!=i) std::<span class="built_in">swap</span>(a[i],a[r]);</span><br><span class="line">		<span class="keyword">if</span>(!a[i][i]) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		t=<span class="built_in">pow</span>(a[i][i],mod<span class="number">-2</span>);</span><br><span class="line">		<span class="keyword">for</span>(j=<span class="number">1</span>;j&lt;=n;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(i==j) <span class="keyword">continue</span>;</span><br><span class="line">			p=a[j][i]*t%mod;</span><br><span class="line">			<span class="keyword">for</span>(k=i;k&lt;=(n&lt;&lt;<span class="number">1</span>);++k) a[j][k]=((a[j][k]-p*a[i][k]%mod)+mod)%mod;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>(j=<span class="number">1</span>;j&lt;=(n&lt;&lt;<span class="number">1</span>);++j) a[i][j]=a[i][j]*t%mod;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://decemberfox.github.io/zh-CN/number4/" data-id="clsn1zwsk000b14fe9kid6s2j" data-title="数论 ( 四 )" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/zh-CN/number5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          数论 ( 五 )
+        
+      </div>
+    </a>
+  
+  
+    <a href="/zh-CN/number3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">数论 ( 三 )</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/zh-CN/physical_formulas/">初中物理公式大全</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number5/">数论 ( 五 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number4/">数论 ( 四 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number3/">数论 ( 三 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number2/">数论 ( 二 )</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">一月 2024</a></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 By Autoload<br>
+      Driven - <a href="https://hexo.io/" target="_blank">Hexo</a>|Theme - <a href="https://github.com/autoload/hexo-theme-auto" target="_blank">Auto</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

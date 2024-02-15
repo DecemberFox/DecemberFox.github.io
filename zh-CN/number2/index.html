@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>数论 ( 二 ) | DecemberFox&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">DecemberFox&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">The Most Vegetable.</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-number2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/zh-CN/number2/" class="article-date">
+  <time class="dt-published" datetime="2024-01-28T16:00:00.000Z" itemprop="datePublished">2024-01-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      数论 ( 二 )
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="本章概况"><a href="#本章概况" class="headerlink" title="本章概况"></a>本章概况</h2><p>本章将会详细介绍同余式、费马小定理、剩余系、欧拉定理、扩展欧拉定理、威尔逊定理和裴蜀定理。</p>
+<span id="more"></span>
+<hr>
+<h2 id="同余式-texttt-Congruence"><a href="#同余式-texttt-Congruence" class="headerlink" title="同余式 ( $\texttt{Congruence}$ )"></a>同余式 ( $\texttt{Congruence}$ )</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>如果将两整数 $a,b$ 模 $m$ 的余数相同，则称 $a,b$ 模 $m$ 同余，记作</p>
+<script type="math/tex; mode=display">a\equiv b(\bmod\,m)</script><h3 id="乘法逆元"><a href="#乘法逆元" class="headerlink" title="乘法逆元"></a>乘法逆元</h3><p><strong>若 $a,b$ 互质</strong>，且满足同余方程 $ax\equiv1(\bmod\,b)$，则称 $x$ 为 $a$ 模 $b$ 的乘法逆元，记作 $a^{-1}$</p>
+<p>例如 : $8x\equiv1(\bmod\,5)$，解得 $x=2,7,12\cdots$</p>
+<p>如果 $a,b$ 不互质，同余方程就没有解。例如 $a=8,b=4$ 此时不论 $x$ 为多少，$a$ 始终是 $b$ 的 $2x$ 倍，余数始终为 $0$。</p>
+<p>再比如 $a=8,b=6$，此时余数会随着 $x$ 的增加而在 $2,4,0$ 不断循环，没有余数为 $1$ 的情况。</p>
+<h2 id="费马小定理-texttt-Fermat’s-Little-Theorem"><a href="#费马小定理-texttt-Fermat’s-Little-Theorem" class="headerlink" title="费马小定理 ( $\texttt{Fermat’s Little Theorem}$ )"></a>费马小定理 ( $\texttt{Fermat’s Little Theorem}$ )</h2><p><strong>若 $p$ 为质数，且满足 $a,p$ 互质</strong>，则有</p>
+<script type="math/tex; mode=display">\fcolorbox{red}{white}{$a^{p-1}\equiv1(\bmod\,p)$}</script><p>例如 : $a=4,p=3$，则 $4^{3-1}\equiv1(\bmod\,3)$ 是成立的。</p>
+<p>证明 : </p>
+<p>首先构造一个与 $p$ 互质的序列，由于 $p$ 为质数，因此 $1$ ~ $p-1$ 的数都与 $p$ 互质，故 $A=\{1,2,3,\cdots,p-1\}$。</p>
+<p>现在来证明 ( 命题 $1$ )</p>
+<script type="math/tex; mode=display">\prod^{p-1}_{i=1}a\times A_i\equiv\prod^{p-1}_{i=1}A_i(\bmod\,p)</script><p>首先，<strong>每个 $a\times A_i(\bmod\,p)$ 的余数必定是独一无二的</strong> ( 命题 $2$ ) ，下面利用反证法证明</p>
+<p>假设 $aA_i(\bmod\,p)$ 与 $aA_j(\bmod\,p)$ 的余数是 $r$，则两式可以表示为</p>
+<script type="math/tex; mode=display">aA_i=xp+r,aA_j=yp+r</script><p>两式相减得到</p>
+<script type="math/tex; mode=display">a(A_i-A_j)=(x-y)p</script><p>可以发现式子右侧为 $p$ 的倍数，左侧的数中，$a$ 与 $p$ 互质，且 $(A_i-A_j)&lt;p$，因此 $a(A_i-A_j)$ 一定不是 $p$ 的倍数，左右相互矛盾。</p>
+<p>故命题 $2$ 成立。</p>
+<p>且由于 $a\times A_i(\bmod\,p)&lt;p$，因此该式的余数集合与 $A_i(\bmod\,p)$ 相同，故证得命题 $1$ 成立。</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\prod^{p-1}_{i=1}a\times A_i\equiv&\prod^{p-1}_{i=1}A_i(\bmod\,p)\\
+a^{p-1}\prod^{p-1}_{i=1}A_i\equiv&\prod^{p-1}_{i=1}A_i(\bmod\,p)\\
+a^{p-1}\equiv&1(\bmod\,p)
+\end{aligned}</script><p>再化简最终得到，</p>
+<script type="math/tex; mode=display">a^{p-1}\equiv1(\bmod\,p)</script><p>证毕。</p>
+<h3 id="经典问题"><a href="#经典问题" class="headerlink" title="经典问题"></a>经典问题</h3><p>给定两个数 $a,p$，且 $p$ 为质数，求 $a$ 模 $p$ 的乘法逆元。</p>
+<p>根据费马小定理 $a^{p-1}\equiv1(\bmod\,p)$，可以得到 $a\times a^{p-2}\equiv1(\bmod\,p)$。</p>
+<p>此时根据乘法逆元的定义，$ax\equiv1(\bmod\,p)$ 可以得到 $x=a^{p-2}$，即 $a$ 模 $p$ 的乘法逆元为 $a^{p-2}$，因此可以使用快速幂求解。</p>
+<p>代码如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> ll;</span><br><span class="line"><span class="function">ll <span class="title">MultiplicationInverse</span><span class="params">(ll a,<span class="type">int</span> b,<span class="type">int</span> p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	b-=<span class="number">2</span>;</span><br><span class="line">	<span class="function">ll <span class="title">ans</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="keyword">while</span>(b)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(b&amp;<span class="number">1</span>) ans=ans*a%p;</span><br><span class="line">		a=a*a%p;</span><br><span class="line">		b&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>时间复杂度为 : $O(\log n)$</p>
+<hr>
+<h2 id="剩余系-texttt-Residue-System"><a href="#剩余系-texttt-Residue-System" class="headerlink" title="剩余系 ( $\texttt{Residue System}$ )"></a>剩余系 ( $\texttt{Residue System}$ )</h2><h3 id="剩余类-同余类-texttt-Residue-Class"><a href="#剩余类-同余类-texttt-Residue-Class" class="headerlink" title="剩余类 ( 同余类 , $\texttt{Residue Class}$ )"></a>剩余类 ( 同余类 , $\texttt{Residue Class}$ )</h3><p>给定一个正整数 $n$，把所有整数根据模 $n$ 的余数 $r\in[0,n-1]$ 分成 $n$ 类，每一类表示为 $C_r=nx+r$ 的形式，这类数所构成的一个集合称为模 $n$ 的剩余类。</p>
+<p>例如 : $n=5,r=3$，则 $C_3=5x+3$ 为模 $5$ 的一个剩余类，此时取任意整数 $x$，可以得到该类中的一个数。</p>
+<h3 id="完全剩余系-完系-texttt-Complete-System-of-Residues"><a href="#完全剩余系-完系-texttt-Complete-System-of-Residues" class="headerlink" title="完全剩余系 ( 完系 , $\texttt{Complete System of Residues}$ )"></a>完全剩余系 ( 完系 , $\texttt{Complete System of Residues}$ )</h3><p>给定一个正整数 $n$，有 $n$ 个不同的模 $n$ 的剩余类，从这 $n$ 个不同的剩余类中各取出一个元素，总共有 $n$ 个数，将这些数构成一个新的集合，则称这个集合为模 $n$ 的完全剩余系。</p>
+<p>例如 : $n=5$，则 $\{0,1,2,3,4\}$ 是一个模 $5$ 的完全剩余系；同时，$\{5,1,-3,8,9\}$ 也是一个模 $5$ 的完全剩余系 ( 其中 $5$ 是从剩余系 $C_0$ 中取出，其余分别从 $C_1,C_2,C_3$ 和 $C_4$ 中取出的 ) 。</p>
+<h3 id="简化剩余系-缩系-texttt-Reduced-System-of-Residues"><a href="#简化剩余系-缩系-texttt-Reduced-System-of-Residues" class="headerlink" title="简化剩余系 ( 缩系 , $\texttt{Reduced System of Residues}$ )"></a>简化剩余系 ( 缩系 , $\texttt{Reduced System of Residues}$ )</h3><p>给定一个正整数 $n$，有 $\varphi(n)$ 个不同的模 $n$ 的余数 $r$ 与 $n$ 互质的剩余类，从这 $\varphi(n)$ 个剩余类中各取出一个元素，总共 $\varphi(n)$ 个数，将这些数构成一个新的集合，则称这个集合为模 $n$ 的简化剩余系。</p>
+<p>显然模 $n$ 的简化剩余系中所有的数都与 $n$ 互质。</p>
+<p>例如 : $n=5$，则 $\{1,2,3,4\}$ 是一个模 $5$ 的简化剩余系；当 $n=10$ 时，$\{1,3,7,9\}$ 是一个模 $10$ 的简化剩余系 ( 其中 $1$ 是从剩余系 $C_1$ 中取出，其余分别从 $C_3,C_7$ 和 $C_9$ 中取出的 )；同理还能列出 $\{11,23,37,49\}$。</p>
+<hr>
+<h2 id="欧拉定理-texttt-Euler-Theorem"><a href="#欧拉定理-texttt-Euler-Theorem" class="headerlink" title="欧拉定理 ( $\texttt{Euler Theorem}$ )"></a>欧拉定理 ( $\texttt{Euler Theorem}$ )</h2><h3 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h3><p><strong>若 $\gcd(a,m)$</strong>，则有</p>
+<script type="math/tex; mode=display">\fcolorbox{red}{white}{$a^{\varphi(m)}\equiv1(\bmod\,m)$}</script><p>例如 : $a=3,m=4$，则</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+a^{\varphi(m)}&\equiv1(\bmod\,m)\\
+3^{\varphi(4)}&\equiv1(\bmod\,4)\\
+3^2&\equiv1(\bmod\,4)\\
+9&\equiv1(\bmod\,4)
+\end{aligned}</script><p>可以看出同余式成立。</p>
+<p>再如 : $a=3,m=5$，则</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+a^{\varphi(m)}&\equiv1(\bmod\,m)\\
+3^{\varphi(5)}&\equiv1(\bmod\,5)\\
+3^4&\equiv1(\bmod\,5)\\
+81&\equiv1(\bmod\,5)
+\end{aligned}</script><p>证明 :</p>
+<p>构造一个与 $m$ 互质的序列。</p>
+<p>设 $\{r_1,r_2,\cdots,r_{\varphi(m)}\}$ 是一个模 $m$ 的简化剩余系 ( $m$ 的简化剩余系一定是与 $m$ 互质的序列 )，则 $\{ar_1,ar_2,\cdots,ar_{\varphi(m)}\}$ 也是一个模 $m$ 的简化剩余系 ( 因为 $a$ 也与 $m$ 互质，因此对于任意一个 $ar_i$，其都与 $m$ 互质 )。</p>
+<p>因此，可以得到下式</p>
+<script type="math/tex; mode=display">\prod^{\varphi(m)}_{i=1}r_i\equiv\prod^{\varphi(m)}_{i=1}ar_i\equiv a^{\varphi(m)}\prod^{\varphi(m)}_{i=1}r_i(\bmod\,m)</script><p>可以约去 $\prod^{\varphi(m)}_{i=1}r_i$，得到 $a^{\varphi(m)}\equiv1(\bmod\,m)$</p>
+<p>当 $m$ 为质数时，由于 $\varphi(m)=m-1$，带入欧拉定理可得到<strong>费马小定理</strong> $a^{m-1}\equiv1(\bmod\,m)$</p>
+<hr>
+<h2 id="扩展欧拉定理-texttt-Extended-Euler-Theorem"><a href="#扩展欧拉定理-texttt-Extended-Euler-Theorem" class="headerlink" title="扩展欧拉定理 ( $\texttt{Extended Euler Theorem}$ )"></a>扩展欧拉定理 ( $\texttt{Extended Euler Theorem}$ )</h2><h3 id="基本概念-2"><a href="#基本概念-2" class="headerlink" title="基本概念"></a>基本概念</h3><script type="math/tex; mode=display">
+\color{red}
+a^b\equiv\begin{cases}
+a^b,&b<\varphi(m),&(\bmod\,m)\\
+a^{b\bmod\varphi(m)+\varphi(m)},&b\ge \varphi(m),&(\bmod\,m)
+\end{cases}</script><p>$a^b$ 不能合并至 $a^{b\bmod\varphi(m)+\varphi(m)}$，例如 :</p>
+<p>$a=2,m=4,b=1$，此时 $2^4\not\equiv 2^{1\bmod2+2}(\bmod\,4)$</p>
+<p>$a=2,m=4,b=6$，此时 $2^6\equiv2^{6\bmod2+2}(\bmod\,4)$</p>
+<p>特别地，<strong>当 $\gcd(a,m)=1$ 时</strong>，$a^{b\bmod\varphi(m)+\varphi(m)}=a^{b\bmod\varphi(m)}\times a^{\varphi(m)}$，且由欧拉定理 $a^{\varphi(m)}\equiv1(\bmod\,m)$ 可以得到 $\color{red}a^b\equiv a^{b\bmod\varphi(m)},b\ge\varphi(m),(\bmod\,m)$。</p>
+<h3 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h3><h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P5091">P5091 【模板】扩展欧拉定理</a></p>
+<p>给你三个整数，$a,m,b$，你需要求：$a^b\bmod\,m$。</p>
+<p>其中 $1\le a\le 10^9,1\le b\le 10^{20000000},1\le m\le10^8$。</p>
+<h4 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h4><p>可以看到题目中 $b$ 的范围非常大，使用快速幂求解的时间复杂度为 $O(\log b)$，显然会超时，因此可以使用扩展欧拉定理来解答这道题。</p>
+<p>使用扩展欧拉定理可以将 $b$ 的值降至 $\varphi(m)$ 的级别，这是完全可以接受的。</p>
+<p>首先需要求 $\varphi(m)$ 的值，在 <a target="_blank" rel="noopener" href="https://www.luogu.com.cn/blog/298529/number1">数论 ( 一 )</a> 中已经提过，如下 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">phi</span><span class="params">(<span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> i,ans=x;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">2</span>;i*i&lt;=x;++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(x%i==<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ans=ans/i*(i<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">while</span>(x%i==<span class="number">0</span>) x/=i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(x&gt;<span class="number">1</span>) ans=ans/x*(x<span class="number">-1</span>);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来就要根据扩展欧拉定理对 $a^b$ 进行降幂，由于 $10^{20000000}$ 过于大，因此需要使用 <code>string</code> 类型的变量存储 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">std::string num;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">depow</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i,p=<span class="built_in">phi</span>(m),l=num.<span class="built_in">size</span>(),b;</span><br><span class="line">	<span class="type">bool</span> f;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;l;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		b=(b&lt;&lt;<span class="number">1</span>)+(b&lt;&lt;<span class="number">3</span>)+(num[i]^<span class="number">48</span>);</span><br><span class="line">		<span class="keyword">if</span>(b&gt;=p) f=<span class="literal">true</span>,b%=p;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(f) b+=p;</span><br><span class="line">	<span class="keyword">return</span> b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>depow</code> 函数最终返回的值就是 $b\bmod\varphi(m)+\varphi(m)$ 了。</p>
+<p>最终 $b$ 的值就在整型的范围内，使用快速幂可以解答，如下 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> ll;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">pow</span><span class="params">(ll a,<span class="type">int</span> b,<span class="type">int</span> m)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">ll <span class="title">ans</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="keyword">while</span>(b)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(b&amp;<span class="number">1</span>) ans=ans*a%m;</span><br><span class="line">		a=a*a%m;</span><br><span class="line">		b&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="威尔逊定理-texttt-Wilson’s-Theorem"><a href="#威尔逊定理-texttt-Wilson’s-Theorem" class="headerlink" title="威尔逊定理 ( $\texttt{Wilson’s Theorem}$ )"></a>威尔逊定理 ( $\texttt{Wilson’s Theorem}$ )</h2><h3 id="基本概念-3"><a href="#基本概念-3" class="headerlink" title="基本概念"></a>基本概念</h3><p><strong>$(p-1)!\equiv-1(\bmod\,p)$ 是 $p$ 为质数的充分必要条件。</strong></p>
+<p><strong>当 $p$ 为质数时</strong>，则</p>
+<script type="math/tex; mode=display">\fcolorbox{red}{white}{$(p-1)!\equiv-1(\bmod\,p)$}</script><h3 id="证明"><a href="#证明" class="headerlink" title="证明"></a>证明</h3><ol>
+<li><p><strong>充分性</strong></p>
+<p> 若 $p$ 不是质数，当 $p=1$ 时，$(1-1)!\equiv0(\bmod\,1)$；当 $p=4$ 时，$(4-1)!\equiv2(\bmod\,2)$。</p>
+<p> <strong>当 $p&gt;4$ 时</strong> :</p>
+<ul>
+<li><p><strong>若 $p$ 为完全平方数</strong>，令 $p=k^2$，则 $k&gt;2$，即 $2k&gt;4$。</p>
+<p>  $k^2&gt;2k$，即 $p&gt;2k$。</p>
+<script type="math/tex; mode=display">\begin{aligned}(p-1)!&=1\times2\times\cdots\times k\times\cdots\times 2k\times \cdots\times(p-1)\\&=k\times k\times2\times[1\times2\times\cdots\times(p-1)]\\&=k^2\times n\\&=p\times n\end{aligned}</script><p>  因此 $(p-1)!\equiv0(\bmod\,p)$。</p>
+</li>
+<li><p><strong>若 $p$ 不是完全平方数</strong>，令 $p=a\times b$，$1&lt;a&lt;b&lt;p$</p>
+<script type="math/tex; mode=display">\begin{aligned}(p-1)!&=1\times2\times\cdots\times a\times\cdots\times b\times(p-1)\\&=a\times b\times[1\times2\times\cdots\times(p-1)]\\&=a\times b\times n\\&=p\times n\end{aligned}</script><p>  因此 $(p-1)!\equiv0(\bmod\,p)$。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>必要性</strong></p>
+<p> <strong>当 $p$ 是质数</strong> :</p>
+<p> 则集合 $\{1,2,3,\cdots,p-1\}$ 是模 $p$ 的简化剩余系，当 $a\in[1,p-1]$，$a$ 与 $p$ 互质。</p>
+<p> 故集合 $\{a,2a,3a,\cdots,(p-1)a\}$ 是模 $p$ 的简化剩余系，对于 $x\in[1,p-1]$，集合中只有一个 $ax\equiv1(\bmod\,p)$</p>
+<p> 例如 : $p=7,a=3$，则两集合分别为 $\{1,2,3,4,5,6\}$ 和 $\{3,6,9,12,15,18\}$，分别对 $p$ 取模得到集合 $\{3,6,2,5,1,4\}$。</p>
+<ul>
+<li><p><strong>当 $a=x$ 时</strong>，即</p>
+<script type="math/tex; mode=display">\begin{aligned}x^2&\equiv1(\bmod\,p)\\x^2-1&\equiv0(\bmod\,p)\\(x+1)(x-1)&\equiv0(\bmod\,p)\\\footnotesize\textsf{解得 }\normalsize x_1=1&,x_2=p-1\end{aligned}</script></li>
+<li><p><strong>当 $a\ne x$ 时</strong>，满足 $ax\equiv1(\operatorname{mod}p)$ 的 $2\le a,x\le p-2$ 所以必然有 $\frac{p-3}{2}$ 对数的乘积模 $p$ 为 $1$，即</p>
+<script type="math/tex; mode=display">\begin{aligned}(p-2)!&\equiv1(\bmod\,p)\\(p-1)!&\equiv p-1(\bmod\,p)\equiv-1(\bmod\,p)\end{aligned}</script><p>例如 : $p=7$ 时，简化剩余系集合为 $\{1,2,3,4,5,6\}$，此时可以得到 $1\times1\equiv6\times6\equiv2\times4\equiv3\times5\equiv1(\bmod\,p)$</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>证毕。</p>
+<hr>
+<h3 id="威尔逊定理推论"><a href="#威尔逊定理推论" class="headerlink" title="威尔逊定理推论"></a>威尔逊定理推论</h3><p>在上述的证明过程中，还可以得到以下推论。</p>
+<ol>
+<li><strong>若 $p$ 为质数</strong>，则有<script type="math/tex; mode=display">\fcolorbox{red}{white}{$(p-1)!+1\equiv0(\bmod\,p)$}</script></li>
+<li><strong>若 $p&gt;4$ 为合数</strong>，则有<script type="math/tex; mode=display">\fcolorbox{red}{white}{$(p-1)!\equiv0(\bmod\,p)$}</script></li>
+</ol>
+<hr>
+<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><p><a target="_blank" rel="noopener" href="https://acm.hdu.edu.cn/showproblem.php?pid=2973">HDU 2973 YAPTCHA</a> / <a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/UVA1434">UVA 1434</a></p>
+<p>给定 $n(n\le10^6)$，求 $S_n$。</p>
+<script type="math/tex; mode=display">S_n=\sum^{n}_{k=1}\bigg\lfloor\frac{(3k+6)!+1}{3k+7}-\Big\lfloor\frac{(3k+6)!}{3k+7}\Big\rfloor\bigg\rfloor</script><h4 id="题解-1"><a href="#题解-1" class="headerlink" title="题解"></a>题解</h4><p>先令 $p=3k+7$，则求和项变为 :</p>
+<script type="math/tex; mode=display">\bigg\lfloor\frac{(p-1)!+1}{p}-\Big\lfloor\frac{(p-1)!}{p}\Big\rfloor\bigg\rfloor</script><p>若 $p$ 是质数，根据威尔逊定理推论 $1$ : $(p-1)!+1\equiv0(\bmod\,p)$，可以知道 $\frac{(p-1)!+1}{p}$ 为整数，且 $\frac{(p-1)!}{p}$ 比 $\frac{(p-1)!+1}{p}$ 小 $\frac{1}{p}$，因此可以知道 $\Big\lfloor\frac{(p-1)!}{p}\Big\rfloor$ 的值为 $\frac{(p-1)!+1}{p}-1$，两者作差，结果为 $1$。<br>因此，当 $p$ 为质数时，求和项的值为 $1$。</p>
+<p>若 $p$ 是合数，根据威尔逊定理推论 $2$ : $(p-1)!\equiv0(\bmod\,p)$，可以知道 $\frac{(p-1)!}{p}$ 为整数，且 $\frac{(p-1)!+1}{p}$ 比 $\frac{(p-1)!}{p}$ 大 $\frac{1}{p}$，因此可以知道该式等价于 $\lfloor\frac{1}{p}\rfloor$，向下取整后为 $0$。</p>
+<p>综上所述，最终结论为统计集合 $\{3k+6\le n\mid k\in\mathbb Z\}$ 中质数的个数。</p>
+<p>可以使用线性筛法，下面为代码 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> ll;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> const1=<span class="number">1e8</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> const2=<span class="number">3e6</span>+<span class="number">10</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> const3=<span class="number">1e6</span>+<span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> Prime[const3],PrePrime[const3];</span><br><span class="line"><span class="type">bool</span> Primebool[const1];</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">GetPrime</span><span class="params">(<span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ll i,j;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">2</span>;i&lt;x;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(!Primebool[i])</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>((i<span class="number">-7</span>)%<span class="number">3</span>==<span class="number">0</span>) Prime[(i<span class="number">-7</span>)/<span class="number">3</span>]=<span class="number">1</span>;</span><br><span class="line">			<span class="keyword">for</span>(j=i*i;j&lt;x;j+=i) Primebool[j]=<span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i,n,t;</span><br><span class="line">	<span class="built_in">GetPrime</span>(const2);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">2</span>;i&lt;const3;++i) PrePrime[i]=PrePrime[i<span class="number">-1</span>]+Prime[i];</span><br><span class="line">	std::cin&gt;&gt;t;</span><br><span class="line">	<span class="keyword">while</span>(t--)</span><br><span class="line">	&#123;</span><br><span class="line">		std::cin&gt;&gt;n;</span><br><span class="line">		std::cout&lt;&lt;PrePrime[n]&lt;&lt;std::endl;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="裴蜀定理-贝祖定理-texttt-Bezout’s-Lemma"><a href="#裴蜀定理-贝祖定理-texttt-Bezout’s-Lemma" class="headerlink" title="裴蜀定理 ( 贝祖定理 , $\texttt{Bézout’s Lemma}$ )"></a>裴蜀定理 ( 贝祖定理 , $\texttt{Bézout’s Lemma}$ )</h2><h3 id="基本概念-4"><a href="#基本概念-4" class="headerlink" title="基本概念"></a>基本概念</h3><p><strong>一定存在整数 $x,y$，满足 $ax+by=\gcd(a,b)$</strong></p>
+<p>例如 : $4x+6y=2$，此时 $x=-1,y=1$ 满足条件。</p>
+<p>证明 :</p>
+<p>设取整数 $x_0,y_0$ 时，$ax+by$ 的最小整数为 $s$，即 $ax_0+by_0=s$。</p>
+<p>因为 $\gcd(a,b)|ax_0$ ( 即 $ax_0\equiv0(\operatorname{mod}\gcd(a,b))$ ) 且 $\gcd(a,b)|by_0$，所以 <strong>$\gcd(a,b)|s$</strong>。</p>
+<p>设 $a=q_as+r(0\le r&lt;s)$，则</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+r&=a-q_as\\
+&=a-q_a(ax_0+by_0)\\
+&=a-q_aax_0-q_aby_0\\
+&=a(1-q_ax_0)+b(-q_ay_0)\\
+&=ax+by
+\end{aligned}</script><p>其中 $1-q_ax_0$ 和 $-q_ay_0$ 都为整数，因此可以视为整数解 $x,y$。</p>
+<p>由于 $ax+by=s$ 中的 $s$ 为最小正整数解，而于 $r&lt;s$ 的假设相互矛盾，因此 $r=0$。</p>
+<p>故 $a=q_as$，即 $s|a$，同理可得 $b=q_bs$，即 $s|b$。</p>
+<p>故 <strong>$s|\gcd(a,b)$</strong>。</p>
+<p>由于 $s|\gcd(a,b)$ 且 $\gcd(a,b)|s$，可知 $s=\gcd(a,b)$。</p>
+<p>证毕。</p>
+<h3 id="裴蜀定理推广"><a href="#裴蜀定理推广" class="headerlink" title="裴蜀定理推广"></a>裴蜀定理推广</h3><p><strong>一定存在整数 $x,y$，满足条件 $ax+by=\gcd(a,b)\times n$</strong></p>
+<p>证明 :</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ax+by&=\gcd(a,b)\\
+(ax+by)n&=\gcd(a,b)\times n\\
+axn+byn&=\gcd(a,b)\times n\\
+\end{aligned}</script><p>此时设 $x_{new}=xn,y_{new}=yn$，可以得到新的解</p>
+<script type="math/tex; mode=display">ax_{new}+by_{new}=\gcd(a,b)\times n</script><p>因为 $x,y$ 与 $n$ 均为质数，因此 $x_{new}$ 和 $y_{new}$ 也为质数。</p>
+<h3 id="裴蜀定理再推广"><a href="#裴蜀定理再推广" class="headerlink" title="裴蜀定理再推广"></a>裴蜀定理再推广</h3><p><strong>一定存在整数 $x_1,x_2,\cdots,x_n$，满足 $\sum^n_{i=1}a_ix_i=\gcd(a_1,a_2,\cdots,a_n)\times n$</strong></p>
+<h4 id="题目-2"><a href="#题目-2" class="headerlink" title="题目"></a>题目</h4><p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P4549">P4549 【模板】裴蜀定理</a></p>
+<p>不难看出该方程 $S=\sum^n_{i=1}A_i\times X_i$ 一定有解且最小的情况为 $\gcd(A_1,A_2,\cdots,A_n)$。</p>
+<p>因此直接求出 $\gcd(A_1,A_2,\cdots,A_n)$ 即可。</p>
+<p>代码如下 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">abs</span><span class="params">(<span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> x&gt;<span class="number">0</span>?x:-x;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">gcd</span><span class="params">(<span class="type">int</span> x,<span class="type">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> y==<span class="number">0</span>?x:<span class="built_in">gcd</span>(y,x%y);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i,n,a,ans;</span><br><span class="line">	std::cin&gt;&gt;a&gt;&gt;ans;</span><br><span class="line">	ans=<span class="built_in">abs</span>(ans);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">2</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		std::cin&gt;&gt;a;</span><br><span class="line">		ans=<span class="built_in">gcd</span>(ans,<span class="built_in">abs</span>(a));</span><br><span class="line">	&#125;</span><br><span class="line">	std::cout&lt;&lt;ans&lt;&lt;std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://decemberfox.github.io/zh-CN/number2/" data-id="clsn1zws4000214fe1108bbwt" data-title="数论 ( 二 )" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/zh-CN/number3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          数论 ( 三 )
+        
+      </div>
+    </a>
+  
+  
+    <a href="/zh-CN/number1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">数论 ( 一 )</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/zh-CN/physical_formulas/">初中物理公式大全</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number5/">数论 ( 五 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number4/">数论 ( 四 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number3/">数论 ( 三 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number2/">数论 ( 二 )</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">一月 2024</a></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 By Autoload<br>
+      Driven - <a href="https://hexo.io/" target="_blank">Hexo</a>|Theme - <a href="https://github.com/autoload/hexo-theme-auto" target="_blank">Auto</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

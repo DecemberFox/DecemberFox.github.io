@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>数论 ( 三 ) | DecemberFox&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">DecemberFox&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">The Most Vegetable.</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-number3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/zh-CN/number3/" class="article-date">
+  <time class="dt-published" datetime="2024-01-29T16:00:00.000Z" itemprop="datePublished">2024-01-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      数论 ( 三 )
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="本章概况"><a href="#本章概况" class="headerlink" title="本章概况"></a>本章概况</h2><p>本章将会详细讲解扩展欧几里得算法、线性不定方程、线性同余方程、乘法逆元、中国剩余定理和扩展中国剩余定理。</p>
+<span id="more"></span>
+<hr>
+<h2 id="扩展欧几里得算法-texttt-Extended-Euclidean-Algorithm"><a href="#扩展欧几里得算法-texttt-Extended-Euclidean-Algorithm" class="headerlink" title="扩展欧几里得算法 ( $\texttt{Extended Euclidean Algorithm}$ )"></a>扩展欧几里得算法 ( $\texttt{Extended Euclidean Algorithm}$ )</h2><h3 id="基本内容"><a href="#基本内容" class="headerlink" title="基本内容"></a>基本内容</h3><p>扩展欧几里得算法可以找到 $ax+by=\gcd(a,b)$ 的一组整数解。</p>
+<ol>
+<li><p><strong>当 $b=0$ 时</strong>，$ax+by=a$</p>
+<p> 解得 $x=1,y=0$</p>
+<script type="math/tex; mode=display">\fcolorbox{red}{white}{$f(x_p,y_p)=f(1,0)$}</script></li>
+<li><p><strong>当 $b\ne0$ 时</strong>，由</p>
+<p> 欧几里得算法 $\gcd(a,b)=gcd(b,a\bmod\,b)$ 和裴蜀定理 $ax+by=\gcd(a,b)$ 得，</p>
+<script type="math/tex; mode=display">\begin{aligned}\gcd(a,b)&=ax+by\\\gcd(b,a\bmod\,b)&=bx_1+(a\bmod\,b)y_1\\&=bx_1+(a-\Big\lfloor\frac{a}{b}\Big\rfloor\times b)y_1\\&=bx_1+ay_1-\Big\lfloor\frac{a}{b}\Big\rfloor\times by_1\\&=ay_1+b(x_1-\Big\lfloor\frac{a}{b}\Big\rfloor y_1)\end{aligned}</script><p> 因此 $x=y_1,y=x_1-\lfloor\frac{a}{b}\rfloor y_1$，此时就可以通过递归的方法自下而上地求出 $x$ 和 $y$。</p>
+<script type="math/tex; mode=display">\color{red}f(x_p,y_p)=f(y_{p+1},x_{p+1}-\Big\lfloor\small\frac{a}{b}\normalsize\Big\rfloor y_{p+1})</script></li>
+</ol>
+<p>由此构造出的解称为特解 $(x_0,y_0)$，可以通过特解间接求出通解 :</p>
+<script type="math/tex; mode=display">\color{red}\begin{cases}x=x_0+\frac{b}{\gcd(a,b)}\times k\\y=y_0-\frac{a}{\gcd(a,b)}\times k\end{cases}</script><p>证明通解仍然成立 :</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ax_0+by_0&=ax+by\\
+ax_0+by_0&=(ax+by)\\
+ax_0+by_0&=\bigg[a\Big(x_0+\frac{b}{\gcd(a,b)}\times k\Big)+b\Big(y_0-\frac{a}{\gcd(a,b)}\times k\Big)\bigg]\\
+ax_0+by_0&=\bigg[ax_0+\frac{ab}{\gcd(a,b)}\times k+by_0-\frac{ab}{\gcd(a,b)}\times k\bigg]\\
+ax_0+by_0&=ax_0+by_0\\
+\end{aligned}</script><p>由上可知该构造通解方法是可行的，下面为扩展欧几里得算法的代码 ( 通过欧几里得算法扩展而来 ) :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">gcd</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b)</span>                 <span class="comment">//欧几里得算法</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!b) <span class="keyword">return</span> a;</span><br><span class="line">	<span class="keyword">else</span> retrun <span class="built_in">gcd</span>(b,a%b);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> b?<span class="built_in">gcd</span>(b,a%b):a;           <span class="comment">//更加简便的方法</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">exgcd</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b,<span class="type">int</span> &amp;x,<span class="type">int</span> &amp;y)</span> <span class="comment">//扩展欧几里得算法</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!b)</span><br><span class="line">	&#123;</span><br><span class="line">		x=<span class="number">1</span>;</span><br><span class="line">		y=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span> x1,y1,d;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(b,a%b,x1,y1);</span><br><span class="line">	x=y1;</span><br><span class="line">	y=x1-a/b*y1;</span><br><span class="line">	<span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>时间复杂度 : $O(\log n)$。</p>
+<hr>
+<h2 id="线性不定方程-texttt-Linear-Indeterminate-Equation"><a href="#线性不定方程-texttt-Linear-Indeterminate-Equation" class="headerlink" title="线性不定方程 ( $\texttt{Linear Indeterminate Equation}$ )"></a>线性不定方程 ( $\texttt{Linear Indeterminate Equation}$ )</h2><p>求不定方程 $ax+by=c$ 的一组整数解。</p>
+<p>根据裴蜀定理可知 $ax+by=\gcd(a,b)$ 一定有整数解，因此同样可以求出不定方程的一组特解 :</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ax+by&=\gcd(a,b)\\
+(ax+by)\times \frac{c}{\gcd(a,b)}&=\gcd(a,b)\times \frac{c}{\gcd(a,b)}\\
+a\times\frac{xc}{\gcd(a,b)}+b\times\frac{yc}{\gcd(a,b)}&=c
+\end{aligned}</script><p>从式子中可以看出 $ax+by=c$ 的特解为 $x_0=\frac{xc}{\gcd(a,b)},y_0=\frac{yc}{\gcd(a,b)}$，因此需要使用不定方程 $ax+by=\gcd(a,b)$ 的解 $x_1,y_1$ 求出 $ax+by=c$ 的特解。</p>
+<p>此时带入上文所述的构造通解的方法同样可以得到通解，</p>
+<script type="math/tex; mode=display">\begin{cases}x=\frac{x_1c+b}{\gcd(a,b)}\times k\\y=\frac{y_1c-a}{\gcd(a,b)}\times k\end{cases}</script><p>此时就需要判断通解是否存在整数解，</p>
+<ol>
+<li><p><strong>当 $c\mid\gcd(a,b)$ 时</strong>，即 $\frac{c}{\gcd(a,b)}$ 一定为整数，同时 $\frac{xc}{\gcd(a,b)}$ 和 $\frac{yc}{\gcd(a,b)}$ 均为整数，此时有整数解，同时，解为</p>
+<script type="math/tex; mode=display">\fcolorbox{red}{white}{$x=\frac{x_0c}{\gcd(a,b)},y=\frac{y_0c}{\gcd(a,b)}$}</script></li>
+<li><p><strong>当 $c\nmid\gcd(a,b)$ 时</strong>，即 $\frac{c}{\gcd(a,b)}$ 不为整数，此时 $\frac{xc}{\gcd(a,b)}$ 和 $\frac{yc}{\gcd(a,b)}$ 也一定不为整数，此时没有整数解。</p>
+</li>
+</ol>
+<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P1516">P1516 青蛙的约会</a></p>
+<p>根据题目意思可以知道，设需要跳跃 $a$ 次，那么满足条件的情况就为</p>
+<script type="math/tex; mode=display">x+an\equiv y+am(\bmod\,L)</script><p>再进行变换，</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x+an&\equiv y+am(\bmod\,L)\\
+x+an-(y+am)&\equiv0(\bmod\,L)\\
+x+an-y-am&\equiv0(\bmod\,L)\\
+a(n-m)+x-y&\equiv0(\bmod\,L)\\
+\end{aligned}</script><p>此时不难发现，$m-n$ 与 $x-y$ 都是常数，将其分别设为 $k=m-n,b=x-y$，</p>
+<script type="math/tex; mode=display">ak+b\equiv0(\bmod\,L)</script><p>此时可以发现 $L\mid ak+b$，因此可以写为等式</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ak+b&=Lp\\
+ka-Lp&=-b\\
+\end{aligned}</script><p>此时使用扩展欧几里得算法可以解出该式，首先求出 $\gcd(k,L)$，则</p>
+<script type="math/tex; mode=display">ka-Lp=\gcd(k,L)</script><p>一定有整数解，接下来判断 $b$ 是否整除 $\gcd(k,L)$，排除 <code>Impossible</code> 的情况。</p>
+<p>如果有整数解，则解为 $a=-\frac{a_1b}{\gcd(k,L)}$。</p>
+<p>由于 $a$ 可能是负数，因此我们需要通过修改特解为通解避免负数情况，可以使用加上 $\frac{L}{\gcd(k,L)}$ 的方法来使负数变为正数，代码如下 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ll <span class="title">abs</span><span class="params">(ll x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> x&gt;<span class="number">0</span>?x:-x;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">exgcd</span><span class="params">(ll a,ll b,ll &amp;x,ll &amp;y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!b)</span><br><span class="line">	&#123;</span><br><span class="line">		x=<span class="number">1</span>;</span><br><span class="line">		y=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">	ll x1,y1,d;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(b,a%b,x1,y1);</span><br><span class="line">	x=y1;</span><br><span class="line">	y=x1-a/b*y1;</span><br><span class="line">	<span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ll x,y,n,m,l,k,b,a,p,d;</span><br><span class="line">	<span class="built_in">read</span>(x,y,n,m,l);</span><br><span class="line">	k=m-n;</span><br><span class="line">	b=x-y;</span><br><span class="line">	<span class="keyword">if</span>(k&lt;<span class="number">0</span>) k=-k,b=-b;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(k,l,a,p);</span><br><span class="line">	<span class="keyword">if</span>(b%d) <span class="built_in">printf</span>(<span class="string">&quot;Impossible\n&quot;</span>);</span><br><span class="line">	<span class="keyword">else</span> <span class="built_in">write</span>((b/d*a%(l/d)+(l/d))%(l/d));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="线性同余方程-texttt-Linear-Congruence-Equation"><a href="#线性同余方程-texttt-Linear-Congruence-Equation" class="headerlink" title="线性同余方程 ( $\texttt{Linear Congruence Equation}$ )"></a>线性同余方程 ( $\texttt{Linear Congruence Equation}$ )</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>给定整数 $a,b,m$，求解同余方程 $ax\equiv b(\bmod\,m)$，若存在整数解，则求出任意一个整数解。</p>
+<h3 id="使用扩展欧几里得算法求解线性同余方程"><a href="#使用扩展欧几里得算法求解线性同余方程" class="headerlink" title="使用扩展欧几里得算法求解线性同余方程"></a>使用扩展欧几里得算法求解线性同余方程</h3><p>在上文中已经展示过如何求解，即先将同余方程转换为不定方程，在使用扩展欧几里得算法求解 :</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ax&\equiv b(\bmod\,m)\\
+ax-b&\equiv0(\bmod\,m)\\
+\end{aligned}</script><p>此时不难发现 $m\mid ax-b$，因此可以设</p>
+<script type="math/tex; mode=display">ax-b=m(-y)</script><p>因为其中表示倍数关系 $y$ 的正负对于最终结果没有影响，可以取其相反数方便计算。</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ax-b&=-my\\
+ax+my&=b
+\end{aligned}</script><p>转换为不定方程后就可以通过欧几里得算法求解，首先使用裴蜀定理判断是否存在解，即 $\gcd(a,b)\mid b$ 时存在整数解。</p>
+<ol>
+<li><p><strong>当 $\gcd(a,b)\mid b$ 时</strong>，存在整数解为 <strong>( 特解 )</strong> :</p>
+<script type="math/tex; mode=display">\fcolorbox{red}{white}{$x=\frac{x_0b}{\gcd(a,b)}$}</script></li>
+<li><p><strong>当 $\gcd(a,b)\nmid b$ 时，不存在整数解</strong>。</p>
+</li>
+</ol>
+<p>代码如下 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">exgcd</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b,<span class="type">int</span> &amp;x,<span class="type">int</span> &amp;y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!b)</span><br><span class="line">	&#123;</span><br><span class="line">		x=<span class="number">1</span>;</span><br><span class="line">		y=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span> x1,y1,d;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(b,a%b,x1,y1);</span><br><span class="line">	x=y1;</span><br><span class="line">	y=x1-a/b*y1;</span><br><span class="line">	<span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> a,b,x,y,m,d;</span><br><span class="line">	std::cin&gt;&gt;a&gt;&gt;b&gt;&gt;m;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(a,b,x,y);</span><br><span class="line">	<span class="keyword">if</span>(b%d) std::cout&lt;&lt;<span class="string">&quot;none\n&quot;</span>&lt;&lt;std::endl;</span><br><span class="line">	<span class="keyword">else</span> std::cout&lt;&lt;b/d*x%m&lt;&lt;std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="乘法逆元-texttt-Multiplicative-Inverse-Modulo"><a href="#乘法逆元-texttt-Multiplicative-Inverse-Modulo" class="headerlink" title="乘法逆元 ( $\texttt{Multiplicative Inverse Modulo}$ )"></a>乘法逆元 ( $\texttt{Multiplicative Inverse Modulo}$ )</h2><p>在 <a href="https://decemberfox.github.io/zh-CN/number2">数论 ( 二 )</a> 中已经讲到过使用费马小定理 ( $a^{p-1}\equiv1(\bmod\,p)$ ) 求解乘法逆元的方法，而其中有限制条件，即 $p$ 必须为质数。</p>
+<p>而如果使用扩展欧几里得算法求解乘法逆元，其适用范围会更广。</p>
+<p>当 $a$ 与 $m$ 互质时，对于方程 $ax\equiv1(\bmod\,m)$，求 $a$ 模 $m$ 的乘法逆元 $x$。( $0\le x&lt; m$ )</p>
+<p>与上文同余方程相同，先将同余方程 $ax\equiv1(\bmod\,m)$ 转换为不定方程 $ax+my=1$ 。</p>
+<p>再使用扩展欧几里得算法求解不定方程，可以发现 $a$ 与 $m$ 互质，即 $\gcd(a,m)=1$，那么不定方程就可以转换为 $ax+my=\gcd(a,m)$，由裴蜀定理可知，该不定方程一定有整数解。</p>
+<p>但是如果直接带入扩展欧几里得算法求解，得到的解有可能不在条件 $0\le x&lt;m$ 的范围内，因此可以将 $x$ 改为 $(x\bmod\,m+m)\bmod\,m$，通过这样“馍加馍”的变形就可以保证最终的乘法逆元满足条件。</p>
+<p>求 $a$ 在模 $m$ 意义下的乘法逆元 $x$ 的代码如下 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ll <span class="title">exgcd</span><span class="params">(ll a,ll b,ll &amp;x,ll &amp;y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!b)</span><br><span class="line">	&#123;</span><br><span class="line">		x=<span class="number">1</span>;</span><br><span class="line">		y=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">	ll x1,y1,d;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(b,a%b,x1,y1);</span><br><span class="line">	x=y1;</span><br><span class="line">	y=x1-a/b*y1;</span><br><span class="line">	<span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ll a,m,x,y;</span><br><span class="line">	std::cin&gt;&gt;a&gt;&gt;m;</span><br><span class="line">	<span class="built_in">exgcd</span>(a,m,x,y);</span><br><span class="line">	std::cout&lt;&lt;(x%m+m)%m&lt;&lt;std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="中国剩余定理-texttt-Chinese-Remainder-Theorem-CRT"><a href="#中国剩余定理-texttt-Chinese-Remainder-Theorem-CRT" class="headerlink" title="中国剩余定理 ( $\texttt{Chinese Remainder Theorem,CRT}$ )"></a>中国剩余定理 ( $\texttt{Chinese Remainder Theorem,CRT}$ )</h2><h3 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h3><p>求解线性同余方程组</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+x&\equiv &r_1(\bmod\,m_1)\\
+x&\equiv &r_2(\bmod\,m_2)\\
+&&\vdots\\
+x&\equiv &r_n(\bmod\,m_n)
+\end{cases}</script><p>其中模数 $m_1,m_2,\cdots,m_n$ 为<strong>两两互质</strong>的整数，求 $x$ 的最小非负整数解。</p>
+<p>中国剩余定理分为 $4$ 步进行 :</p>
+<ol>
+<li><p>计算所有模数的积 $M=\prod^n_{i=1}m_i=m_1\times m_2\times\cdots\times m_n$。</p>
+</li>
+<li><p>计算第 $i$ 个方程的 $c_i=\frac{M}{m_i}$。</p>
+</li>
+<li><p>计算 $c_i$ 在模 $m_i$ 意义下的逆元 $c_i^{-1}$。</p>
+</li>
+<li><p>$x=\sum^n_{i=1}r_ic_ic_i^{-1}(\bmod\,M)$。</p>
+</li>
+</ol>
+<p>例如，在《孙子算经》中有这样的问题 :</p>
+<blockquote>
+<p>_有物不知其数，三三数之剩二，五五数之剩三，七七数之剩二。问物几何？_</p>
+</blockquote>
+<p>用线性同余方程组可以表示为 :</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+x&\equiv 2(\bmod\,3)\\
+x&\equiv 3(\bmod\,5)\\
+x&\equiv 2(\bmod\,7)
+\end{cases}</script><ol>
+<li>$M=m_1\times m_2\times m_3=3\times5\times7=105$</li>
+<li><p>$c_1=\frac{M}{m_1}=\frac{105}{3}=35$</p>
+<p> $c_2=\frac{M}{m_2}=\frac{105}{5}=21$</p>
+<p> $c_3=\frac{M}{m_3}=\frac{105}{7}=15$</p>
+</li>
+<li><p>$c_1^{-1}=c_1^{m_1-2}=35^{3-2}=35$</p>
+<p> $c_2^{-1}=c_2^{m_2-2}=21^{5-2}=9261$</p>
+<p> $c_3^{-1}=c_3^{m_3-2}=15^{7-2}=759375$</p>
+</li>
+<li>$x=\sum^n_{i=1}r_ic_ic_i^{-1}(\bmod\,M)=(2\times35\times35+3\times21\times9261+2\times15\times759375)\bmod\,105=23367143\bmod\,105=23$</li>
+</ol>
+<p>通过验证发现</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+23&\equiv2(\bmod\,3)\\
+23&\equiv3(\bmod\,5)\\
+23&\equiv2(\bmod\,7)
+\end{cases}</script><p>上述同余式都成立。</p>
+<h3 id="证明"><a href="#证明" class="headerlink" title="证明"></a>证明</h3><p>中国剩余定理证明 :</p>
+<p>先证明 $\sum^n_{i=1}r_ic_ic_i^{-1}$ 满足每个 $x\equiv r_i(\bmod\,m_i)$。</p>
+<p>对于序列中任意一个位置 $j$ :</p>
+<ul>
+<li><p>当 $i\neq j$ 时，此时 $c_j=\frac{\prod^n_{k=1}m_k}{m_j}=m_1\times m_2\times\cdots\times m_{j-1}\times m_{j+1}\times\cdots\times m_k$，式子中仍然包含 $m_i$，因此 $c_j$ 为 $m_i$ 的倍数，即 $c_j\equiv0(\bmod\,m_i)$，且 $c_jc_j^{-1}\equiv0(\bmod\,m_i)$。</p>
+</li>
+<li><p>当 $i=j$ 时，由于模数两两互质，因此 $c_i\not\equiv0(\bmod\,m_i)$，且 $c_i$ 与 $m_i$ 同样互质，因此 $c_ic_i^{-1}\equiv1(\bmod\,m_i)$。</p>
+</li>
+</ul>
+<p>因此，在模数为 $m_i$ 的情况下，所有 $i\neq j$ 的情况的项都不存在了，只剩下 $i=j$ 的项 :</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x&\equiv\sum^n_{j=1}r_jc_jc_j^{-1}&(\bmod\,m_i)\\
+&\equiv r_ic_ic_i^{-1}&(\bmod\,m_i)\\
+&\equiv r_i&(\bmod\,m_i)
+\end{aligned}</script><p>而 $\sum^n_{j=1}r_jc_jc_j^{-1}\bmod\,M$ 对于 $\sum^n_{j=1}r_jc_jc_j^{-1}\bmod\,m_i$ 来说，因为 $m_i\mid M$，因此两者是同余的，即</p>
+<script type="math/tex; mode=display">\sum^n_{j=1}r_jc_jc_j^{-1}\bmod\,M=r_i\bmod\,m_i</script><p>因此就可以通过求解 $\sum^n_{j=1}r_jc_jc_j^{-1}\bmod\,M$ 来求出 $x$ 的值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> n;</span><br><span class="line"><span class="function">ll <span class="title">exgcd</span><span class="params">(ll a,ll b,ll &amp;x,ll &amp;y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!b)</span><br><span class="line">	&#123;</span><br><span class="line">		x=<span class="number">1</span>;</span><br><span class="line">		y=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">	ll x1,y1,d;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(b,a%b,x1,y1);</span><br><span class="line">	x=y1;</span><br><span class="line">	y=x1-a/b*y1;</span><br><span class="line">	<span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">crt</span><span class="params">(ll m[],ll r[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	<span class="function">ll <span class="title">sum</span><span class="params">(<span class="number">1</span>)</span>,<span class="title">ans</span><span class="params">(<span class="number">0</span>)</span>,c,x,y</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;++i) sum*=m[i];</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		c=sum/m[i];</span><br><span class="line">		<span class="built_in">exgcd</span>(c,m[i],x,y);</span><br><span class="line">		ans=(ans+r[i]*c*x%sum)%sum;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (ans%sum+sum)%sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="扩展中国剩余定理-texttt-Extended-Chinese-Remainder-Theorem-EXCRT"><a href="#扩展中国剩余定理-texttt-Extended-Chinese-Remainder-Theorem-EXCRT" class="headerlink" title="扩展中国剩余定理 ( $\texttt{Extended Chinese Remainder Theorem,EXCRT}$ )"></a>扩展中国剩余定理 ( $\texttt{Extended Chinese Remainder Theorem,EXCRT}$ )</h2><p>与中国剩余定理相同，扩展中国剩余定理同样是用于解决线性同余式方程组的算法，但是中国剩余定理无法解决 $m_1,m_2,\cdots,m_n$ 不一定两两互质的情况,因此就需要用到扩展中国剩余定理。</p>
+<p>求解线性同余方程组</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+x&\equiv r_1(\bmod\,m_1)\\
+x&\equiv r_2(\bmod\,m_2)\\
+&\vdots\\
+x&\equiv r_n(\bmod\,m_n)
+\end{cases}</script><p>其中模数 $m_1,m_2,\cdots,m_n$ <strong>不一定两两互质</strong>，求 $x$ 的最小非负整数解。</p>
+<p>此时中国剩余定理中由于模数不互质，因而 $c_i$ 与 $m_i$ 不一定互质，此时 $c_i$ 在模 $m_i$ 意义下的逆元 $c_i^{-1}$ 不存在，因此算法失效。</p>
+<p>扩展中国剩余定理的核心思想是将方程组依次合并，最终剩下一个线性方程并得以求解。</p>
+<p>设合并方程 $x\equiv r_i(\bmod\,m_i)$ 和 $x\equiv r_j(\bmod\,m_j)$，可以变为这样 :</p>
+<script type="math/tex; mode=display">x=m_ip+r_i=m_jq+r_j</script><script type="math/tex; mode=display">m_ip-m_jq=r_j-r_i</script><p>由裴蜀定理的推广可知</p>
+<ol>
+<li>当 $\gcd(m_i,m_j)\nmid(r_j-r_i)$ 时，方程无解。</li>
+<li>当 $\gcd(m_i,m_j)\mid(r_j-r_i)$ 时，方程有解。</li>
+</ol>
+<p>有扩展欧几里得算法可得</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+m_ip-m_jq&=r_j-r_i\\
+m_ip-m_jq&=\gcd(m_i,m_j)\times c\\
+\frac{m_ip-m_jq}{c}&=\gcd(m_i,m_j)\\
+\frac{m_ip}{c}-\frac{m_jq}{c}&=\gcd(m_i,m_j)\\
+\frac{m_i}{c}\times p-\frac{m_j}{c}\times q&=\gcd(m_i,m_j)\\
+\frac{m_i}{c}\times p+\frac{m_j}{c}\times(-q)&=\gcd(m_i,m_j)
+\end{aligned}</script><p>此时就可以求出该方程的特解 $p$ 和 $q$，其中使用 $-q$ 是为了更方便计算。</p>
+<p>此时通解 $P=p+\frac{m_j}{\gcd(m_i,m_j)}\times k,Q=q-\frac{m_i}{\gcd(m_i,m_j)}\times k$。</p>
+<p>因此 $x=m_iP+r_i=m_jQ+r_j=\frac{m_im_j}{\gcd(m_i,m_j)}\times k+m_ip+r_i$。</p>
+<p>如果将两个同余方程合并为一个同余方程 $x\equiv r(\bmod\,m)$，则 $r=m_ip+r_i,m=\frac{m_im_j}{\gcd(m_i,m_j)}=\operatorname{lcm}(m_i,m_j)$。</p>
+<p>由于同余方程组中有 $n$ 条同余方程，此时就需要合并 $n-1$ 次即可剩下一条同余方程并得以求解。</p>
+<p>代码如下 :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> ll;</span><br><span class="line"><span class="function">ll <span class="title">exgcd</span><span class="params">(ll a,ll b,ll &amp;x,ll &amp;y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!b)</span><br><span class="line">	&#123;</span><br><span class="line">		x=<span class="number">1</span>;</span><br><span class="line">		y=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">	ll x1,y1,d;</span><br><span class="line">	d=<span class="built_in">exgcd</span>(b,a%b,x1,y1);</span><br><span class="line">	x=y1;</span><br><span class="line">	y=x1-a/b*y1;</span><br><span class="line">	<span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">excrt</span><span class="params">(ll r[],ll m[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	ll m1,m2,r1,r2,d,p,q;</span><br><span class="line">	r1=r[<span class="number">1</span>];</span><br><span class="line">	m1=m[<span class="number">1</span>];</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">2</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		r2=r[i];</span><br><span class="line">		m2=m[i];</span><br><span class="line">		d=<span class="built_in">exgcd</span>(m1,m2,p,q);</span><br><span class="line">		<span class="keyword">if</span>((r2-r1)%d) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">		p=(((r2-r1)/d*p)%(m2/d)+(m2/d))%(m2/d);</span><br><span class="line">		r1=m1*p+r1;</span><br><span class="line">		m1=m1/d*m2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (r1%m1+m1)%m1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于对特解 $p$ 求解时的馍加馍处理时，模数的选取之所以是 $\frac{m_j}{\gcd(m_i,m_j)}$，是因为通解公式中使用这个。而使用这个式子不会导致解失效，因此就可以通过这种方法确定最小的正整数解。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://decemberfox.github.io/zh-CN/number3/" data-id="clsn1zwsa000414fe3cenciz8" data-title="数论 ( 三 )" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/zh-CN/number4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          数论 ( 四 )
+        
+      </div>
+    </a>
+  
+  
+    <a href="/zh-CN/number2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">数论 ( 二 )</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/zh-CN/physical_formulas/">初中物理公式大全</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number5/">数论 ( 五 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number4/">数论 ( 四 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number3/">数论 ( 三 )</a>
+          </li>
+        
+          <li>
+            <a href="/zh-CN/number2/">数论 ( 二 )</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">二月 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">一月 2024</a></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 By Autoload<br>
+      Driven - <a href="https://hexo.io/" target="_blank">Hexo</a>|Theme - <a href="https://github.com/autoload/hexo-theme-auto" target="_blank">Auto</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
